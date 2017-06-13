@@ -1,6 +1,6 @@
 ## Introdução
 
-Implementação *client-side* em JavaScript e HTML5 do algoritmo [marching squares]((https://en.wikipedia.org/wiki/Marching_squares).
+Implementação *client-side* em JavaScript e HTML5 do algoritmo [marching squares](https://en.wikipedia.org/wiki/Marching_squares).
 
 ![exemplo funcionamento](https://raw.githubusercontent.com/vschettino/marching-squares/master/relat%C3%B3rio/marching.png)
 
