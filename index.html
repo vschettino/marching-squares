@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <title>Calculadora de Contorno | Marching Squares</title>
+     <meta charset="UTF-8">
+     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+     <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="MarchingSquares.js" ></script>
+    <script type="text/javascript">
+
+    var readyStateCheckInterval = setInterval( function() {
+        if (document.readyState === "complete") {
+            clearInterval(readyStateCheckInterval);
+            init();
+        }
+    }, 5);
+
+    function grifa(array){ // get random item from array
+        return array[Math.floor(Math.random() * array.length)];
+    }
+
+    var canvas, context, outlinePoints, gitHubPreviewHack=false;
+
+    function init(){
+
+        //CREATE CANVAS
+        canvas = document.createElement('canvas');
+        canvas.style.position = "absolute";
+        context = canvas.getContext("2d");
+        var canvasContainer = document.getElementById("canvasContainer");
+        canvasContainer.appendChild(canvas);
+        canvas.width = 500;
+        canvas.height = 500;
+
+        //FILL CANVAS WITH A BLOB MADE OF RANDOM LETTERS
+        var weights = ["normal", "bold", "bolder", "lighter"];
+        var styles = ["normal", "italic", "oblique"];
+        var fonts = ["serif", "sans-serif", "cursive", "fantasy"];
+        var colors = ['#ddd', '#333', '#222', '#555','#aaa']
+        context.textBaseline = "top";
+
+
+        var characters = ("ABCDEFGHIJKLMNOPQRSTUVXYZ1234567890").split("");
+        var i, character;
+        var numCharacters = 8;
+        var radianIncrement = (Math.PI*2) / numCharacters;
+
+        for(i=0; i<numCharacters; i++){
+            context.font = grifa(weights) + " " + grifa(styles) + " " + 130 + "px " + grifa(fonts);
+            context.fillStyle = grifa(colors);
+            context.save();
+            context.translate(150, 150);
+            context.rotate(i * radianIncrement);
+            character = grifa(characters);
+            context.fillText(character,0,0);
+            context.restore();
+        }
+    }
+
+
+    function runMarchingSquares(){
+        var start = new Date();
+        outlinePoints = MarchingSquares.getBlobOutlinePoints(canvas);
+        console.log(outlinePoints)
+        var result = document.getElementById("result");
+        result.innerHTML = "Tempo Necessário : "+ (new Date() - start);
+        result.innerHTML += "<br/>Vezes Executadas : "+ (timesRun);
+
+        renderOutline();
+    }
+
+    timesRun = 0;
+
+    function renderOutline(){
+        context.fillStyle = (timesRun%2) ? "#FF0000" : "#0000FF";
+        timesRun++;
+        for(var i=0; i<outlinePoints.length; i+=2){
+            context.fillRect(outlinePoints[i], outlinePoints[i+1], 1, 1);
+        }
+    }
+
+    </script>
+
+    <style type="text/css">
+        #controlsDiv{
+            position: absolute;
+        }
+    </style>
+
+</head>
+    <body>
+
+        <div class="container">
+      <div class="header clearfix">
+        <nav>
+          <ul class="nav nav-pills float-right">
+          </ul>
+        </nav>
+        <h3 class="text-muted">Calculadora de Contorno</h3>
+      </div>
+
+      <div class="jumbotron">
+        <h1 class="display-3">Como calcular o contorno da figura abaixo?</h1>
+        <p class="">A figura abaixo é gerada a partir de uma combinação aleatória de:</p>
+        <ul>
+          <li>Letras</li>
+          <li>Números</li>
+          <li>Fontes</li>
+          <li>Cores</li>
+          <li>Posições</li>
+        </ul>
+        <p class="">Ao todo, são oito itens. Este processo é feito através do HTML5, utilizando um <code>canvas</code>. Através do algoritmo <a href="https://en.wikipedia.org/wiki/Marching_squares">Marching Squares</a> é possível descobrir as linhas de contorno de um campo escalar bidimensional - no caso, com uma representação gráfica. Para testar seu funcionamento, clique no botão abaixo.</p>
+
+        <div id="controlsDiv">
+            <span>
+              <p><a class="btn btn-lg btn-success" onclick="runMarchingSquares()" href="#"role="button">Extrair o contorno</a></p>
+            </span>
+        </div>
+      </div>
+
+      <div class="row text-center">
+        <div class="col-lg-6">
+          <div id="canvasContainer"></div>
+        </div>
+        <div class="col-lg-6">
+          <p id="result"></p>
+        </div>
+      </div>
+
+
+    </div>
+
+    </body>
+</html>
